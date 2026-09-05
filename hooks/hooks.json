@@ -1,0 +1,4 @@
+{
+  "description": "redact function hooks",
+  "modules": ["redact.ts"]
+}
