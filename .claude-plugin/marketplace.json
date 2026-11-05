@@ -1,0 +1,11 @@
+{
+  "name": "scriptease-redact",
+  "owner": { "name": "scriptease" },
+  "plugins": [
+    {
+      "name": "redact",
+      "source": "./",
+      "description": "Session-scoped secret/PII redaction: placeholders reach the model, real values reach the tools"
+    }
+  ]
+}

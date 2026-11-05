@@ -1,6 +1,6 @@
 {
   "name": "redact",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Session-scoped secret/PII redaction: placeholders reach the model, real values reach the tools",
   "author": {
     "name": "scriptease",
@@ -11,7 +11,7 @@
       "type": "boolean",
       "title": "Auto-detect PII and keys",
       "default": true,
-      "description": "Also redact e-mail addresses, IBANs, card numbers, JWTs, API keys and PEM private keys found in prompts and tool results"
+      "description": "Also redact e-mail addresses, IBANs, card numbers, JWTs, API keys, PEM private keys, credential headers and key=value credentials found in prompts and tool results"
     }
   }
 }
