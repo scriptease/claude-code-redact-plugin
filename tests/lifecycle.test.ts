@@ -71,6 +71,17 @@ describe('tool results', () => {
     expect(r).not.toHaveProperty('ref')
   })
 
+  // Skill args land in the skill's text, which core hands the model unmasked.
+  test('Skill args keep placeholders', async ($, on) => {
+    session(on)
+    let input = ''
+    on('tool.call', async (_$, e) => { input = JSON.stringify(e); return { result: 'Launching skill: x' } })
+    await submit($, 'redact PASS=opaque-secret-52')
+    await $.tool.call({ tool: 'Skill', skill: 'x', args: 'use REDACTED_PASS' })
+    expect(input).toContain('REDACTED_PASS')
+    expect(input).not.toContain('opaque-secret-52')
+  })
+
   test('object keys are masked', async ($, on) => {
     session(on)
     on('tool.call', async () => ({ result: { 'opaque-secret-45': 'matched' } }))

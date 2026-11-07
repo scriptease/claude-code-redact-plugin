@@ -1,6 +1,6 @@
 {
   "name": "redact",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Session-scoped secret/PII redaction: placeholders reach the model, real values reach the tools",
   "author": {
     "name": "scriptease",

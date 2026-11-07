@@ -31,7 +31,7 @@ const KEYCHAIN = ['-s', 'claude-code-redact', '-a', 'aes-key']
 // Tools whose input becomes another model's prompt: placeholders are passed on
 // as they are. A subagent shares this process and resolves them in its own tool
 // calls; another session cannot, by design.
-const MODEL_FACING = /^(?:Agent|Task|SubagentHandback|SendMessage|mcp__t3-code__(?:delegate_task|t3_thread_send|t3_thread_launch|create_threads|schedule_task))$/
+const MODEL_FACING = /^(?:Agent|Task|Skill|SubagentHandback|SendMessage|mcp__t3-code__(?:delegate_task|t3_thread_send|t3_thread_launch|create_threads|schedule_task))$/
 const OPENSSL = ['/usr/bin/openssl', 'enc', '-aes-256-cbc', '-pbkdf2', '-a', '-A', '-pass', 'env:REDACT_KEY']
 
 type Session = {
