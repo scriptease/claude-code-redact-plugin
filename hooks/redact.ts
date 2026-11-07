@@ -480,10 +480,19 @@ export const register: Register = (on, options) => {
     const s = await current($, autoDetect)
     const revealed = s.secrets.size && !MODEL_FACING.test(e.tool) ? mapStrings(e, x => reveal(s, x)) : e
     const r = await next(revealed)
-    let answer: typeof r
+    // Only `r` itself carries core's messages for the call (`ref`: a Skill's SKILL.md,
+    // PostToolUse records). A rebuilt answer drops them, which is wanted once something
+    // was masked: no hook can read or mask those messages.
+    let answer: typeof r = r
     if (r.deny !== undefined) answer = { ...r, deny: conceal(s, r.deny, autoDetect) }
-    else if (r.isError) answer = r.text === undefined ? r : { deny: conceal(s, r.text, autoDetect) }
-    else answer = { result: concealAll(s, r.result, autoDetect), context: r.context } // the engine keeps context from next() whole
+    else if (r.isError) {
+      const text = r.text === undefined ? r.text : conceal(s, r.text, autoDetect)
+      if (text !== r.text) answer = { deny: text! }
+    } else {
+      const result = concealAll(s, r.result, autoDetect)
+      const text = r.text === undefined ? r.text : conceal(s, r.text, autoDetect)
+      if (result !== r.result || text !== r.text) answer = { result, context: r.context } // the engine keeps context from next() whole
+    }
     await persist($, s)
     return answer
   }).catch((_$, _e, next) => ({ deny: withheld(next.called ? 'tool result' : 'tool call', next.error) }))

@@ -49,6 +49,28 @@ describe('tool results', () => {
     expect(leaks(await $.tool.call({ tool: 'Bash', command: 'x' }), 'opaque-secret-44')).toBe(false)
   })
 
+  // ref names core's messages for the call (a Skill's SKILL.md, PostToolUse records); a
+  // rebuilt answer loses them, so a result with nothing to mask must pass as the same object.
+  test('clean result keeps ref', async ($, on) => {
+    session(on)
+    on('tool.call', async () => ({ ref: 7, result: 'Launching skill: x', text: 'Launching skill: x' }))
+    expect(await $.tool.call({ tool: 'Bash', command: 'x' })).toHaveProperty('ref', 7)
+  })
+
+  test('clean error keeps ref', async ($, on) => {
+    session(on)
+    on('tool.call', async () => ({ ref: 8, isError: true as const, result: 'exit 1', text: 'exit 1' }))
+    expect(await $.tool.call({ tool: 'Bash', command: 'x' })).toHaveProperty('ref', 8)
+  })
+
+  test('masked result drops ref: core messages are not masked', async ($, on) => {
+    session(on)
+    on('tool.call', async () => ({ ref: 9, result: 'DB_PASSWORD=opaque-secret-51', text: 'DB_PASSWORD=opaque-secret-51' }))
+    const r = await $.tool.call({ tool: 'Bash', command: 'x' })
+    expect(leaks(r, 'opaque-secret-51')).toBe(false)
+    expect(r).not.toHaveProperty('ref')
+  })
+
   test('object keys are masked', async ($, on) => {
     session(on)
     on('tool.call', async () => ({ result: { 'opaque-secret-45': 'matched' } }))
